@@ -6,18 +6,35 @@ using MiniMercadoSaas.Domain;
 using MiniMercadoSaas.Infrastructure.Context;
 using MiniMercadoSaas.Infrastructure.Repositorys;
 using FluentValidation;
-using MassTransit;
+//using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MiniMercadoSaas.Application.Validators;
 using MiniMercadoSaas.Domain.Interfaces;
-using MiniMercadoSaas.Infrastructure.Consumers;
+//using MiniMercadoSaas.Infrastructure.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+if (!builder.Environment.IsDevelopment())
+{
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
+
+    builder.WebHost.ConfigureKestrel(serverOptions =>
+    {
+        serverOptions.ListenAnyIP(int.Parse(port));
+    });
+}
+
+
+
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+//var serverVersion = ServerVersion.AutoDetect(connectionString);
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var serverVersion = ServerVersion.AutoDetect(connectionString);
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["SecretKey"];
@@ -78,7 +95,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, serverVersion));
+//builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, serverVersion));
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -101,7 +118,7 @@ builder.Services.AddScoped<IFinanceiroService, FinanceiroService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
 
-builder.Services.AddMassTransit(x =>
+/*builder.Services.AddMassTransit(x =>
 {
     
     x.AddConsumer<EstoqueBaixoConsumer>();
@@ -113,7 +130,7 @@ builder.Services.AddMassTransit(x =>
             h.Password("guest");
         });
     });
-});
+});*/
 
 
 builder.Services.AddCors(options =>
@@ -127,7 +144,6 @@ builder.Services.AddCors(options =>
 });
 
 
-
 var app = builder.Build();
 
 app.UseCors("DefaultPolicy");
@@ -135,19 +151,23 @@ app.UseCors("DefaultPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
+
+app.MapOpenApi();
+app.UseSwagger();
+app.UseSwaggerUI();
     
-}
+
 
 app.UseHttpsRedirection();
 
 app.MapControllers();
 
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
+    db.Database.Migrate();
+}
 
 app.Run();
