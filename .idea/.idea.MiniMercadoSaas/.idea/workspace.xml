@@ -14,12 +14,7 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c8f60f4a-340c-4d4a-a018-80bf66e475f5" name="Changes" comment="feat: Users endpoints and finances">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.MiniMercadoSaas/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MiniMercadoSaas/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MiniMercadoSaas.API/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/MiniMercadoSaas.API/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MiniMercadoSaas.Domain/Entities/Venda.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MiniMercadoSaas.Domain/Entities/Venda.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MiniMercadoSaas.Infrastructure/Context/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MiniMercadoSaas.Infrastructure/Context/AppDbContext.cs" afterDir="false" />
-    </list>
+    <list default="true" id="c8f60f4a-340c-4d4a-a018-80bf66e475f5" name="Changes" comment="feat: Users endpoints and finances" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -137,7 +132,7 @@
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "#13 on PDV",
+    "git-widget-placeholder": "PDV",
     "junie.onboarding.icon.badge.shown": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
