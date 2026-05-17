@@ -1,0 +1,18 @@
+GET http://localhost:5290/api/v1/Categoria
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2026.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2026-05-09T235549.200.json
+
+###
+
+GET http://localhost:5290/HealthCheck
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2026.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2026-05-09T235519.200.txt
+
+###
+

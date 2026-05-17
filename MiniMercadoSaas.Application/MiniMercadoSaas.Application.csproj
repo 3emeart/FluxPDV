@@ -7,7 +7,18 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Exceptions\Exceptions.csproj" />
       <ProjectReference Include="..\MiniMercadoSaas.Domain\MiniMercadoSaas.Domain.csproj" />
+      <ProjectReference Include="..\MiniMercadoSaas.Infrastructure\MiniMercadoSaas.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+      <PackageReference Include="FluentValidation" Version="12.1.1" />
+      <PackageReference Include="MassTransit" Version="8.2.5" />
+      <PackageReference Include="mercadopago-sdk" Version="2.12.1" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.15" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
     </ItemGroup>
 
 </Project>
