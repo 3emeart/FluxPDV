@@ -147,7 +147,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors("DefaultPolicy");
+app.UseCors("ProductionPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
