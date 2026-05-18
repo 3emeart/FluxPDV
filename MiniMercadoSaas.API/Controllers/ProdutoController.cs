@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniMercadoSaas.Application.DTO.Request;
 using MiniMercadoSaas.Application.DTO.Response;
@@ -16,21 +17,24 @@ public class ProdutoController : ControllerBase
     {
         _productService = productService;
     }
-
+    
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<List<ProdutoResponse>>> BuscarTodos()
     {
         var produtos = await _productService.BuscarTodos();
         return Ok(produtos);
     }
-
+    
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<ProdutoResponse>> Create(ProdutoRequest produtoRequest)
     {
        var novoProduto =  await _productService.Create(produtoRequest);
         return Ok(novoProduto);
     }
-
+    
+    [Authorize]
     [HttpPut("{id}")]
 
     public async Task<ActionResult<ProdutoResponse>> UpdateProduct(int id, ProdutoRequest produtoRequest)
@@ -38,7 +42,8 @@ public class ProdutoController : ControllerBase
         var produto = await _productService.Update(id, produtoRequest);
         return Ok(produto);
     }
-
+    
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteProduct(int id)
     {
@@ -52,7 +57,8 @@ public class ProdutoController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
-
+    
+    [Authorize]
     [HttpGet("{id}")]
 
     public async Task<ActionResult<ProdutoResponse>> FindById(int id)

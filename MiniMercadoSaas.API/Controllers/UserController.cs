@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniMercadoSaas.Application.DTO.Request;
 using MiniMercadoSaas.Application.ServiceInterfaces;
@@ -15,7 +16,8 @@ public class UserController : ControllerBase
     {
         _userService = userService;
     }
-
+    
+    [Authorize]
     [HttpPost]
 
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -25,14 +27,16 @@ public class UserController : ControllerBase
         var novoUsuario = await _userService.Create(request);
         return Ok(ToResponse(novoUsuario));
     }
-
+    
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         var users = await _userService.GetAllAsync();
         return Ok(users.Select(ToResponse));
     }
-
+    
+    [Authorize]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
