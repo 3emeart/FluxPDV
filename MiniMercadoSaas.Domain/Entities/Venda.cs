@@ -16,10 +16,5 @@ public class Venda
     public DateTime? CanceladaEm { get; set; }
     public ICollection<ItemVenda>? Itens { get; set; } = new List<ItemVenda>();
 
-    public void AdicionarItem(ItemVenda itemFinal)
-    {
-        Itens.Add(itemFinal);
-        
-        TotalFinal = Itens.Sum(i => i.Subtotal);
-    }
+    
 }

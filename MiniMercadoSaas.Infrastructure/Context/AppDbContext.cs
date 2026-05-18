@@ -98,5 +98,8 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<MovimentacaoEstoque>()
             .Property(m => m.Observacao).HasMaxLength(500);
+        
+        
+            
     }
 }
