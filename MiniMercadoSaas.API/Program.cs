@@ -135,11 +135,12 @@ builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("DefaultPolicy", policy =>
+    options.AddPolicy("ProductionPolicy", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("https://fluxpdvsite.onrender.com")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
