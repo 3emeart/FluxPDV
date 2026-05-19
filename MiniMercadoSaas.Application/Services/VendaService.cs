@@ -16,7 +16,7 @@ public class VendaService : IVendaService
        private readonly IVendaRepository _vendaRepository;
        private readonly IProductRepository _productRepository;
        private readonly IMovimentacaoEstoqueRepository _movimentacaoRepository;
-       //private readonly IPublishEndpoint _publishEndpoint;
+       private readonly IPublishEndpoint _publishEndpoint;
        private readonly IItemVendaRepository _itemVendaRepository;
        private readonly IUnitOfWork _unitOfWork;
 
@@ -24,14 +24,14 @@ public class VendaService : IVendaService
               IVendaRepository vendaRepository,
               IProductRepository productRepository,
               IMovimentacaoEstoqueRepository movimentacaoRepository,
-             // IPublishEndpoint publishEndpoint,
+              IPublishEndpoint publishEndpoint,
               IItemVendaRepository itemVendaRepository,
               IUnitOfWork unitOfWork)
        {
               _vendaRepository = vendaRepository;
               _productRepository = productRepository;
               _movimentacaoRepository = movimentacaoRepository;
-              //_publishEndpoint = publishEndpoint;
+              _publishEndpoint = publishEndpoint;
               _itemVendaRepository = itemVendaRepository;
               _unitOfWork = unitOfWork;
               
@@ -150,14 +150,14 @@ public class VendaService : IVendaService
 
                      produto!.Quantidade -= item.Quantidade;
 
-                    /* if (produto.Quantidade <= produto.EstoqueMinimo)
+                     if (produto.Quantidade <= produto.EstoqueMinimo)
                      {
                             await _publishEndpoint.Publish(new EstoqueBaixoEvent(
                                    produto.Id,
                                    produto.Nome,
                                    produto.Quantidade,
                                    produto.EstoqueMinimo));
-                     }*/
+                     }
 
                      var movimentacao = new MovimentacaoEstoque
                      {
