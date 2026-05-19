@@ -6,16 +6,15 @@ using MiniMercadoSaas.Domain;
 using MiniMercadoSaas.Infrastructure.Context;
 using MiniMercadoSaas.Infrastructure.Repositorys;
 using FluentValidation;
-//using MassTransit;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MiniMercadoSaas.Application.Validators;
 using MiniMercadoSaas.Domain.Interfaces;
-//using MiniMercadoSaas.Infrastructure.Consumers;
+using MiniMercadoSaas.Infrastructure.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 if (!builder.Environment.IsDevelopment())
 {
@@ -27,18 +26,22 @@ if (!builder.Environment.IsDevelopment())
     });
 }
 
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") 
+                       ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-
-//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-//var serverVersion = ServerVersion.AutoDetect(connectionString);
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["SecretKey"];
-if (secretKey != null)
+var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") 
+                ?? builder.Configuration["JwtSettings:SecretKey"];
+
+var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") 
+                ?? builder.Configuration["JwtSettings:Issuer"];
+
+var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") 
+                  ?? builder.Configuration["JwtSettings:Audience"];
+
+if (!string.IsNullOrEmpty(secretKey))
 {
     var key = Encoding.ASCII.GetBytes(secretKey);
 
@@ -55,8 +58,8 @@ if (secretKey != null)
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidIssuer = jwtSettings["Issuer"],
-                ValidAudience = jwtSettings["Audience"],
+                ValidIssuer = jwtIssuer,
+                ValidAudience = jwtAudience,
                 ValidateLifetime = true,
             };
         });
@@ -95,8 +98,6 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddControllers();
 
-//builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, serverVersion));
-
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UserRepository>();
@@ -104,7 +105,6 @@ builder.Services.AddScoped<IVendaRepository, VendaRepository>();
 builder.Services.AddScoped<IItemVendaRepository, ItemVendaRepository>();
 builder.Services.AddScoped<IMovimentacaoEstoqueRepository, MovimentacaoEstoqueRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
 
 builder.Services.AddScoped<IProductService, ProdutoService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -115,23 +115,32 @@ builder.Services.AddScoped<IVendaService, VendaService>();
 builder.Services.AddScoped<IEstoqueService, EstoqueService>();
 builder.Services.AddScoped<IFinanceiroService, FinanceiroService>();
 
-
 builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
 
-/*builder.Services.AddMassTransit(x =>
+var mensageriaUrl = Environment.GetEnvironmentVariable("MENSAGERIA_URL");
+
+builder.Services.AddMassTransit(x =>
 {
-    
     x.AddConsumer<EstoqueBaixoConsumer>();
+
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host(new Uri("rabbitmq://localhost"), h =>
+        if (!string.IsNullOrEmpty(mensageriaUrl))
         {
-            h.Username("guest");
-            h.Password("guest");
-        });
-    });
-});*/
+            cfg.Host(new Uri(mensageriaUrl));
+        }
+        else
+        {
+            cfg.Host(new Uri("rabbitmq://localhost"), h =>
+            {
+                h.Username("guest");
+                h.Password("guest");
+            });
+        }
 
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 builder.Services.AddCors(options =>
 {
@@ -153,22 +162,16 @@ app.UseCors("ProductionPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-
 app.MapOpenApi();
 app.UseSwagger();
 app.UseSwaggerUI();
-    
-
 
 app.UseHttpsRedirection();
-
 app.MapControllers();
-
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
     db.Database.Migrate();
 }
 
