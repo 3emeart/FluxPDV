@@ -1,10 +1,18 @@
 using MassTransit;
+using MiniMercadoSaas.Domain;
 using MiniMercadoSaas.Domain.Contracts;
 
 namespace MiniMercadoSaas.Infrastructure.Consumers;
 
 public class EstoqueBaixoConsumer : IConsumer<EstoqueBaixoEvent>
 {
+    private readonly IEstoqueAlertaNotificador _notificador;
+
+    public EstoqueBaixoConsumer(IEstoqueAlertaNotificador notificador)
+    {
+        _notificador = notificador;
+    }
+
     public async Task Consume(ConsumeContext<EstoqueBaixoEvent> context)
     {
         var evento =  context.Message;
@@ -15,8 +23,6 @@ public class EstoqueBaixoConsumer : IConsumer<EstoqueBaixoEvent>
         Console.WriteLine($"Qtd Atual: {evento.QuantidadeAtual} | Mínimo: {evento.EstoqueMinimo}");
         Console.WriteLine("--------------------------------------------------");
 
-        await Task.CompletedTask;
-
+        await _notificador.EnviarAlertaEstoqueBaixoAsync(evento);
     }
-    
 }
