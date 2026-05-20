@@ -13,6 +13,8 @@ using Microsoft.OpenApi.Models;
 using MiniMercadoSaas.Application.Validators;
 using MiniMercadoSaas.Domain.Interfaces;
 using MiniMercadoSaas.Infrastructure.Consumers;
+using MiniMercadoSaas.API.Hubs;
+using MiniMercadoSaas.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,6 +99,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IEstoqueAlertaNotificador, SignalREstoqueAlertaNotificador>();
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -168,6 +172,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.MapControllers();
+app.MapHub<NotificationHub>("/hubs/notifications");
 
 using (var scope = app.Services.CreateScope())
 {
