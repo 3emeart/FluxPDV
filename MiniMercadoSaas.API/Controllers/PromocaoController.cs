@@ -7,7 +7,7 @@ namespace MiniMercadoSaas.API.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-[Authorize(Roles = "Admin,Gerente")]
+//[Authorize(Roles = "Admin,Gerente")]
 public class PromocaoController : ControllerBase
 {
     private readonly IPromocaoRepository _promocaoRepository;
