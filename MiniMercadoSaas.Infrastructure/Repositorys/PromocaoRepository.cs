@@ -35,6 +35,13 @@ public class PromocaoRepository : IPromocaoRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Promocao>> GetAllAsync()
+    {
+        return await _context.Promocaos
+            .Include(p => p.Regras)
+            .ToListAsync();
+    }
+
     public void Update(Promocao promocao)
     {
         _context.Promocaos.Update(promocao);
