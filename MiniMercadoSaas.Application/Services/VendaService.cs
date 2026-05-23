@@ -8,6 +8,7 @@ using MiniMercadoSaas.Domain.Contracts;
 using MiniMercadoSaas.Domain.Entities;
 using MiniMercadoSaas.Domain.Enums;
 using MiniMercadoSaas.Domain.Interfaces;
+using MiniMercadoSaas.Application.Promotions;
 
 namespace MiniMercadoSaas.Application.Services;
 
@@ -18,6 +19,7 @@ public class VendaService : IVendaService
        private readonly IMovimentacaoEstoqueRepository _movimentacaoRepository;
        private readonly IPublishEndpoint _publishEndpoint;
        private readonly IItemVendaRepository _itemVendaRepository;
+       private readonly IPromotionEngine _promotionEngine;
        private readonly IUnitOfWork _unitOfWork;
 
        public VendaService(
@@ -26,6 +28,7 @@ public class VendaService : IVendaService
               IMovimentacaoEstoqueRepository movimentacaoRepository,
               IPublishEndpoint publishEndpoint,
               IItemVendaRepository itemVendaRepository,
+              IPromotionEngine promotionEngine,
               IUnitOfWork unitOfWork)
        {
               _vendaRepository = vendaRepository;
@@ -33,6 +36,7 @@ public class VendaService : IVendaService
               _movimentacaoRepository = movimentacaoRepository;
               _publishEndpoint = publishEndpoint;
               _itemVendaRepository = itemVendaRepository;
+              _promotionEngine = promotionEngine;
               _unitOfWork = unitOfWork;
               
        }
@@ -86,7 +90,7 @@ public class VendaService : IVendaService
               var vendaAtualizada = await _vendaRepository.GetByIdAsync(id, true)
                      ?? throw new NotFoundException("Venda não encontrada após adicionar item");
 
-              vendaAtualizada.TotalFinal = vendaAtualizada.Itens!.Sum(i => i.Subtotal);
+              await _promotionEngine.ProcessarPromocoesAsync(vendaAtualizada);
               await _unitOfWork.CommitAsync();
 
               return vendaAtualizada;
@@ -110,7 +114,7 @@ public class VendaService : IVendaService
 
               venda.Itens.Remove(item);
 
-              venda.TotalFinal = venda.Itens.Sum(i => i.PrecoUnitario * i.Quantidade);
+              await _promotionEngine.ProcessarPromocoesAsync(venda);
 
               await _unitOfWork.CommitAsync();
               return venda;

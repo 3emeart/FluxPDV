@@ -5,6 +5,7 @@ using MiniMercadoSaas.Application.Services;
 using MiniMercadoSaas.Domain;
 using MiniMercadoSaas.Infrastructure.Context;
 using MiniMercadoSaas.Infrastructure.Repositorys;
+using MiniMercadoSaas.Application.Promotions;
 using FluentValidation;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -108,6 +109,7 @@ builder.Services.AddScoped<IUsuarioRepository, UserRepository>();
 builder.Services.AddScoped<IVendaRepository, VendaRepository>();
 builder.Services.AddScoped<IItemVendaRepository, ItemVendaRepository>();
 builder.Services.AddScoped<IMovimentacaoEstoqueRepository, MovimentacaoEstoqueRepository>();
+builder.Services.AddScoped<IPromocaoRepository, PromocaoRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IProductService, ProdutoService>();
@@ -118,6 +120,11 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IVendaService, VendaService>();
 builder.Services.AddScoped<IEstoqueService, EstoqueService>();
 builder.Services.AddScoped<IFinanceiroService, FinanceiroService>();
+
+builder.Services.AddScoped<IPromotionStrategy, LeveXPagueYStrategy>();
+builder.Services.AddScoped<IPromotionStrategy, DescontoQuantidadeStrategy>();
+builder.Services.AddScoped<IPromotionStrategy, DescontoPercentualStrategy>();
+builder.Services.AddScoped<IPromotionEngine, PromotionEngine>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
 
