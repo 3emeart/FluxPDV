@@ -15,6 +15,10 @@ public class AppDbContext : DbContext
     public DbSet<Venda> Vendas { get; set; }
     public DbSet<ItemVenda> ItemVendas { get; set; }
     public DbSet<MovimentacaoEstoque> MovimentacoesEstoque { get; set; }
+    
+    public DbSet<Promocao> Promocaos { get; set; }
+    
+    public DbSet<RegraPromocao> RegraPromocaos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -98,6 +102,20 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<MovimentacaoEstoque>()
             .Property(m => m.Observacao).HasMaxLength(500);
+        
+        modelBuilder.Entity<Promocao>().Property(p => p.Nome).HasMaxLength(50).IsRequired();
+        modelBuilder.Entity<Promocao>().Property(p => p.Tipo).HasConversion<string>();
+        modelBuilder.Entity<RegraPromocao>().HasOne(r => r.Promocao).WithMany(r => r.Regras)
+            .HasForeignKey(r => r.PromocaoId).OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<RegraPromocao>()
+            .HasOne(r => r.Produto)
+            .WithMany()
+            .HasForeignKey(r => r.ProdutoId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<RegraPromocao>()
+            .Property(r => r.ValorDesconto).HasPrecision(18, 2);
         
         
             

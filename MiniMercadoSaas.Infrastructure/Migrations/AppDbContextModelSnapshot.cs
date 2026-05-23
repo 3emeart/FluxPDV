@@ -166,6 +166,70 @@ namespace MiniMercadoSaas.Infrastructure.Migrations
                     b.ToTable("Produtos");
                 });
 
+            modelBuilder.Entity("MiniMercadoSaas.Domain.Entities.Promocao", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("DataFim")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("DataInicio")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Promocaos");
+                });
+
+            modelBuilder.Entity("MiniMercadoSaas.Domain.Entities.RegraPromocao", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("PromocaoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("QuantidadeMinima")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("QuantidadePaga")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("ValorDesconto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProdutoId");
+
+                    b.HasIndex("PromocaoId");
+
+                    b.ToTable("RegraPromocaos");
+                });
+
             modelBuilder.Entity("MiniMercadoSaas.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -296,6 +360,25 @@ namespace MiniMercadoSaas.Infrastructure.Migrations
                     b.Navigation("Categoria");
                 });
 
+            modelBuilder.Entity("MiniMercadoSaas.Domain.Entities.RegraPromocao", b =>
+                {
+                    b.HasOne("MiniMercadoSaas.Domain.Entities.Produto", "Produto")
+                        .WithMany()
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniMercadoSaas.Domain.Entities.Promocao", "Promocao")
+                        .WithMany("Regras")
+                        .HasForeignKey("PromocaoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Produto");
+
+                    b.Navigation("Promocao");
+                });
+
             modelBuilder.Entity("MiniMercadoSaas.Domain.Entities.Categoria", b =>
                 {
                     b.Navigation("Produtos");
@@ -304,6 +387,11 @@ namespace MiniMercadoSaas.Infrastructure.Migrations
             modelBuilder.Entity("MiniMercadoSaas.Domain.Entities.Produto", b =>
                 {
                     b.Navigation("Movimentacoes");
+                });
+
+            modelBuilder.Entity("MiniMercadoSaas.Domain.Entities.Promocao", b =>
+                {
+                    b.Navigation("Regras");
                 });
 
             modelBuilder.Entity("MiniMercadoSaas.Domain.Entities.Venda", b =>
