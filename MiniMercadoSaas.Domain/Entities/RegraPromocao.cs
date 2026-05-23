@@ -5,8 +5,12 @@ public class RegraPromocao
 
     public Guid Id { get; set; }
     public Guid PromocaoId { get; set; }
+    [System.Text.Json.Serialization.JsonIgnore]
     public Promocao Promocao { get; set; } = null!;
+    
     public int ProdutoId { get; set; }
+    
+    [System.Text.Json.Serialization.JsonIgnore]
     public Produto Produto { get; set; } = null!;
 
     public int QuantidadeMinima { get; set; }
