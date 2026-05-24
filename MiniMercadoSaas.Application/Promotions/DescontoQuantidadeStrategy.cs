@@ -12,8 +12,9 @@ public class DescontoQuantidadeStrategy : IPromotionStrategy
         if (item.Quantidade < regra.QuantidadeMinima || !regra.ValorDesconto.HasValue)
             return;
 
-        // O ValorDesconto representa o novo preço unitário reduzido
-        decimal novoPrecoUnitario = regra.ValorDesconto.Value;
-        item.Subtotal = item.Quantidade * novoPrecoUnitario;
+        decimal descontoPorUnidade = regra.ValorDesconto.Value;
+        decimal precoComDesconto = Math.Max(0, item.PrecoUnitario - descontoPorUnidade);
+
+        item.Subtotal = item.Quantidade * precoComDesconto;
     }
 }

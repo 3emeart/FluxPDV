@@ -21,7 +21,9 @@ public class VendaDetalheResponse(Venda venda)
         NomeProduto = i.Produto.Nome,
         Quantidade = i.Quantidade,
         PrecoUnitario = i.PrecoUnitario,
-        Subtotal = i.Quantidade * i.PrecoUnitario
+        Subtotal = i.Subtotal,
+        SubtotalOriginal = i.Quantidade * i.PrecoUnitario,
+        DescontoAplicado = Math.Max(0, (i.Quantidade * i.PrecoUnitario) - i.Subtotal),
+        PromocaoAplicada = i.Subtotal < i.Quantidade * i.PrecoUnitario
     }).ToList();
 }
-
