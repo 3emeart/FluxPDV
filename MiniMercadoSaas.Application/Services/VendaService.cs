@@ -75,9 +75,27 @@ public class VendaService : IVendaService
                      throw new BusinessException("Produto não está ativo");
               }
 
-              if (produto.Quantidade < request.Quantidade)
+              var quantidadeProdutoNaVenda = vendasExistentes.Itens?
+                     .Where(item => item.ProdutoId == request.ProdutoId)
+                     .Sum(item => item.Quantidade) ?? 0;
+
+              if (produto.Quantidade < quantidadeProdutoNaVenda + request.Quantidade)
               {
                      throw new BusinessException("Estoque insuficiente");
+              }
+
+              var itemExistente = vendasExistentes.Itens?
+                     .FirstOrDefault(item => item.ProdutoId == request.ProdutoId);
+
+              if (itemExistente != null)
+              {
+                     itemExistente.Quantidade += request.Quantidade;
+                     itemExistente.Subtotal = itemExistente.Quantidade * itemExistente.PrecoUnitario;
+
+                     await _promotionEngine.ProcessarPromocoesAsync(vendasExistentes);
+                     await _unitOfWork.CommitAsync();
+
+                     return vendasExistentes;
               }
 
               var itemFinal = new ItemVenda(produto.Id, request.Quantidade, produto.PrecoVenda)
